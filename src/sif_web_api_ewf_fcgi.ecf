@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<system xmlns="http://www.eiffel.com/developers/xml/configuration-1-16-0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.eiffel.com/developers/xml/configuration-1-16-0 http://www.eiffel.com/developers/xml/configuration-1-16-0.xsd" name="sif_web_api_ewf_fcgi" uuid="BCFF77D3-264A-494B-A710-468C81264BF6" library_target="sif_web_api_ewf_fcgi">
+	<target name="sif_web_api_ewf_fcgi">
+		<description>Create a web based software product based on the System Interface Framework (SIF) and the Eiffel Web Framework (EWF).</description>
+		<root all_classes="true"/>
+		<file_rule>
+			<exclude>/CVS$</exclude>
+			<exclude>/EIFGENs$</exclude>
+			<exclude>/\.git$</exclude>
+			<exclude>/\.svn$</exclude>
+		</file_rule>
+		<option warning="true" is_obsolete_routine_type="true" syntax="standard">
+			<assertions precondition="true" postcondition="true" check="true" invariant="true" loop="true" supplier_precondition="true"/>
+		</option>
+		<capability>
+			<concurrency support="none" use="none"/>
+			<void_safety support="all" use="all"/>
+		</capability>
+		<library name="base" location="$ISE_LIBRARY/library/base/base.ecf"/>
+		<library name="connector_libfcgi" location="$ISE_LIBRARY/contrib/library/web/framework/ewf/ewsgi/connectors/libfcgi/libfcgi.ecf"/>
+		<library name="conneg" location="$SCM_DIR/external_libraries/JF/EWF/trunk/src/eiffel/main/library/network/protocol/content_negotiation/conneg.ecf"/>
+		<library name="default_libfcgi" location="$ISE_LIBRARY/contrib/library/web/framework/ewf/wsf/default/libfcgi.ecf"/>
+		<library name="encoder" location="$ISE_LIBRARY/contrib/library/web/framework/ewf/text/encoder/encoder.ecf"/>
+		<library name="ewsgi" location="$ISE_LIBRARY/contrib/library/web/framework/ewf/ewsgi/ewsgi.ecf"/>
+		<library name="hal" location="$ISE_LIBRARY/contrib/library/web/communication/mediatype/hal/library/hal.ecf"/>
+		<library name="http" location="$ISE_LIBRARY\contrib\library\network\protocol\http\http.ecf"/>
+		<library name="httpd" location="$ISE_LIBRARY/contrib/library/web/framework/ewf/httpd/httpd.ecf"/>
+		<library name="json" location="$ISE_LIBRARY/contrib/library/text/parser/json/library/json.ecf"/>
+		<library name="libfcgi" location="$ISE_LIBRARY/contrib/library/web/framework/ewf/libfcgi/libfcgi.ecf"/>
+		<library name="shared_logging" location="$ISE_LIBRARY/contrib/library/runtime/logging/shared/src/shared_logging.ecf" readonly="false"/>
+		<library name="sif_core" location="$ISE_LIBRARY/contrib/library/sif/core/src/sif_core.ecf" readonly="false"/>
+		<library name="sif_web" location="$ISE_LIBRARY/contrib/library/sif/web/src/sif_web.ecf" readonly="false"/>
+		<library name="time" location="$ISE_LIBRARY/library/time/time.ecf"/>
+		<library name="uri" location="$ISE_LIBRARY/library/text/uri/uri.ecf"/>
+		<library name="uri_template" location="$ISE_LIBRARY/contrib/library/text/parser/uri_template/uri_template.ecf"/>
+		<library name="wsf" location="$ISE_LIBRARY\contrib\library\web\framework\ewf\wsf\wsf.ecf"/>
+		<library name="wsf_extension" location="$ISE_LIBRARY/contrib/library/web/framework/ewf/wsf/wsf_extension.ecf"/>
+		<cluster name="command" location="./command" recursive="true" readonly="true"/>
+		<cluster name="fake" location="./fake/fcgi" recursive="true" readonly="true"/>
+		<cluster name="product" location="./product" recursive="true" readonly="true"/>
+		<cluster name="representations" location="./representations" recursive="true" readonly="true"/>
+		<cluster name="utility" location="./utility" recursive="true" readonly="true"/>
+		<cluster name="web_api_ewf" location="./web_api_ewf" recursive="true" readonly="true"/>
+		<cluster name="sif_web_api_ewf_fcgi" location="." recursive="false" readonly="true"/>
+	</target>
+</system>
