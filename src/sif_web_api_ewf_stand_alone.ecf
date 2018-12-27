@@ -26,9 +26,9 @@
 		<library name="http" location="$ISE_LIBRARY\contrib\library\network\protocol\http\http.ecf"/>
 		<library name="httpd" location="$ISE_LIBRARY/contrib/library/web/framework/ewf/httpd/httpd.ecf"/>
 		<library name="json" location="$ISE_LIBRARY/contrib/library/text/parser/json/library/json.ecf"/>
-		<library name="shared_logging" location="$ISE_LIBRARY/contrib/library/runtime/logging/shared/src/shared_logging.ecf" readonly="false"/>
-		<library name="sif_core" location="$ISE_LIBRARY/contrib/library/sif/core/src/sif_core.ecf" readonly="false"/>
-		<library name="sif_web" location="$ISE_LIBRARY/contrib/library/sif/web/src/sif_web.ecf" readonly="false"/>
+		<library name="shared_logging" location="$ISE_LIBRARY/external/library/runtime/logging/shared/src/shared_logging.ecf" readonly="false"/>
+		<library name="sif_core" location="$ISE_LIBRARY/external/library/sif/core/src/sif_core.ecf" readonly="false"/>
+		<library name="sif_web" location="$ISE_LIBRARY/external/library/sif/web/src/sif_web.ecf" readonly="false"/>
 		<library name="time" location="$ISE_LIBRARY/library/time/time.ecf"/>
 		<library name="uri" location="$ISE_LIBRARY/library/text/uri/uri.ecf"/>
 		<library name="uri_template" location="$ISE_LIBRARY/contrib/library/text/parser/uri_template/uri_template.ecf"/>
