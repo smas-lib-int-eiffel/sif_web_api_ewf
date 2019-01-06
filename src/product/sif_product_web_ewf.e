@@ -67,7 +67,7 @@ feature {NONE} -- Manufacturing
 			-- This way it is possible to comply to concurrent implementations.
 		end
 
-	manufacture_api_handler(a_command: SIF_COMMAND; a_methods: WSF_REQUEST_METHODS;
+	manufacture_api_handler(a_command: SIF_COMMAND[SIF_DAO[ANY]]; a_methods: WSF_REQUEST_METHODS;
 							a_resource_path: STRING; a_representation_type: like {SIF_REPRESENTATION_ENUMERATION}.type;
 							a_pagination_capable: like {SIF_WEB_API_REQUEST_HANDLER}.pagination_capable;
 							a_search: like {SIF_WEB_API_REQUEST_HANDLER}.search)
@@ -111,16 +111,14 @@ feature {SIF_SYSTEM_INTERFACE_WEB_EWF,SIF_WEB_API_REQUEST_HANDLER} -- Manufactur
 		local
 			--l_representations_media: like internal_representation
 			l_representation_media: SIF_REPRESENTATION_MEDIA
-			l_command_web_media : SIF_COMMAND_WEB_MEDIA
+			l_command_web_media : SIF_COMMAND_MEDIA
 			l_api_handler: SIF_WEB_API_REQUEST_HANDLER
 			l_link_list: like {SIF_WEB_API_REQUEST_HANDLER}.tuple_link_list
 			l_link_descriptor: like {SIF_WEB_API_REQUEST_HANDLER}.tuple_link_descriptor
 			l_representation_json_hal: SIF_REPRESENTATION_JSON_HAL
 			l_representation_json: SIF_REPRESENTATION_JSON
-			l_command : SIF_COMMAND
+			l_command : SIF_COMMAND[SIF_DAO[ANY]]
 		do
---		l_command := create{SIF_COMMAND_CONTROL}.make
---		manufacture_api_handler(l_command, method_post, "/control/stop", {SIF_REPRESENTATION_ENUMERATION}.json_hal, false, void)
 			if use_logging then
 				if not attached available_representations.at ({SIF_REPRESENTATION_ENUMERATION}.json_hal) as l_available_representation then
 					create l_representation_json_hal
@@ -130,26 +128,23 @@ feature {SIF_SYSTEM_INTERFACE_WEB_EWF,SIF_WEB_API_REQUEST_HANDLER} -- Manufactur
 					create l_representation_json
 					available_representations.extend (l_representation_json, {SIF_REPRESENTATION_ENUMERATION}.json)
 				end
-				l_command := create{SIF_COMMAND_UPDATE_LOG}.make
-				manufacture_api_handler(l_command, method_post, "/log_facility", {SIF_REPRESENTATION_ENUMERATION}.json_hal, false, void)
+				l_command := create{SIF_COMMAND_LOG_FACILITY_EXTENDED}.make
+				manufacture_api_handler(l_command, method_patch, "/log_facility", {SIF_REPRESENTATION_ENUMERATION}.json_hal, false, void)
 			end
 			if has_media then
-				check attached starting_environment.at("MEDIA_PATH") end
-				if attached starting_environment.at("MEDIA_PATH") as l_media_path then
-					create l_representation_media.make( create {PATH}.make_from_string (l_media_path) )
-					available_representations.extend (l_representation_media, {SIF_REPRESENTATION_ENUMERATION}.media)
+				create l_representation_media.make
+				available_representations.extend (l_representation_media, {SIF_REPRESENTATION_ENUMERATION}.media)
 
-					l_command_web_media := create{SIF_COMMAND_WEB_MEDIA}.make
-					l_api_handler := create {SIF_WEB_API_REQUEST_HANDLER}.make( l_command_web_media.identifier, method_get, create {URI_TEMPLATE}.make ("/" + media_path), false, void )  -- e.g.  http://localhost:9090/media?media_name=image_name.extension
-					l_api_handler.put_representation_result({SIF_REPRESENTATION_ENUMERATION}.media)
-					api_handlers.force (l_api_handler, api_handlers.count + 1)
+				l_command_web_media := create{SIF_COMMAND_MEDIA}.make
+				l_api_handler := create {SIF_WEB_API_REQUEST_HANDLER}.make( l_command_web_media.identifier, method_get, create {URI_TEMPLATE}.make (media_resource_path), false, void )  -- e.g.  http://localhost:9090/assets/media_name=image_name.extension
+				l_api_handler.put_representation_result({SIF_REPRESENTATION_ENUMERATION}.media)
+				api_handlers.force (l_api_handler, api_handlers.count + 1)
 
-					create l_link_descriptor
-					l_link_descriptor.link_type := 1
-					l_link_descriptor.template_name := media_query_value_template_name
-					l_link_descriptor.descriptor := media_query_parameter_name
-					link_list_media.extend (l_link_descriptor)
-				end
+				create l_link_descriptor
+				l_link_descriptor.link_type := 1
+				l_link_descriptor.template_name := media_query_value_template_name
+				l_link_descriptor.descriptor := media_query_parameter_name
+				link_list_media.extend (l_link_descriptor)
 			end
 			do_manufacture_api_handlers
 		end
@@ -210,7 +205,7 @@ feature {NONE} -- Logging
 	log_resource_routes
 		local
 			l_first: BOOLEAN
-			l_command: SIF_COMMAND
+			l_command: SIF_COMMAND[SIF_DAO[ANY]]
 		do
 			if api_handlers.count > 1 then
 				write_information ("Added the following resource routes for the above commands:")

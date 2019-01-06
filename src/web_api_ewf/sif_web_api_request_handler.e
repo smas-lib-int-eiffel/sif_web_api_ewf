@@ -107,6 +107,9 @@ feature -- Web execution
 			l_representation_type: like {SIF_REPRESENTATION_ENUMERATION}.type
 			l_http_status_code: like {HTTP_STATUS_CODE}.ok
 			l_content_type_string: STRING
+			l_content_type_undefined: STRING
+			l_media_path_comparer: STRING
+			l_media_path_index_first_template_char: INTEGER
 			l_command_cpy: SIF_INTERACTOR
 		do
 			write_information ("%T[Web Api handler] Executing handler.")
@@ -130,9 +133,14 @@ feature -- Web execution
 					-- No Content-Type available, are there query parameters involved?
 					if req.path_info.starts_with ("/themes") then
 						l_representation_type := {SIF_REPRESENTATION_ENUMERATION}.theme
-					elseif req.is_request_method (method_get) then		-- For now it is assumed that we only have query parameters with GET methods!
-						if attached req.query_parameter (product_web.media_query_parameter_name) as l_media_query_parameter_name then	-- To be changed in the future!!!, how to handle media formats in a generic way
-							l_representation_type := {SIF_REPRESENTATION_ENUMERATION}.media
+					elseif req.is_request_method (method_get) then
+						if product_web.has_media then
+							create l_media_path_comparer.make_from_string (product_web.media_resource_path)
+							l_media_path_index_first_template_char := product_web.media_resource_path.index_of ('{', 1)
+							l_media_path_comparer.keep_head (l_media_path_index_first_template_char - 2)
+						   	if req.path_info.starts_with (l_media_path_comparer) then
+								l_representation_type := {SIF_REPRESENTATION_ENUMERATION}.media
+							end
 						else
 							if not req.query_string.is_empty then
 								l_representation_type := {SIF_REPRESENTATION_ENUMERATION}.nvp
@@ -167,49 +175,59 @@ feature -- Web execution
 						end
 					end
 				end
-				if l_http_status_code = {HTTP_STATUS_CODE}.ok then
-
+				if req.is_get_request_method then
 					l_http_status_code := parse_query_parameters(req, la_command.query_interaction_elements, l_query_table).code
+				end
 
+				if l_representation_type /= {SIF_REPRESENTATION_ENUMERATION}.undefined then
 					if l_http_status_code = {HTTP_STATUS_CODE}.ok then
-						write_information ("%T[Web Api handler] Going to execute the command.")
-						la_command.set_pagination_capable (pagination_capable)
-						la_command.execute (l_system_interface_web_ewf)
-						if not la_command.is_ended then
-							if attached {SIF_IE_EVENT}la_command.interaction_elements.interaction_element (Iei_confirm) as l_ie_confirm then
-								l_ie_confirm.event.publish
+						if l_http_status_code = {HTTP_STATUS_CODE}.ok then
+							write_information ("%T[Web Api handler] Going to execute the command.")
+							la_command.set_pagination_capable (pagination_capable)
+
+							la_command.execute (l_system_interface_web_ewf)
+							if not la_command.is_ended then
+								if attached {SIF_IE_EVENT}la_command.interaction_elements.interaction_element (Iei_confirm) as l_ie_confirm then
+									l_ie_confirm.event.publish
+								end
 							end
-						end
-						if la_command.execution_result.passed then
-							write_information ("%T[Web Api handler] Command was executed succesfully, trying to find an available representation to create a response.")
-							if req.is_delete_request_method then
-								l_http_status_code := {HTTP_STATUS_CODE}.gone
-								write_information ("%T[Web Api handler] It was a proper deletion, so no representation available be default.")
-							else
-								if attached la_command.result_interaction_elements as l_result_ies then
-								   	write_information ("%T[Web Api handler] Trying to make a representation for type: " + representation_type_as_string(representation_response))
-									l_representation_result.represent(req, res, Current, l_result_ies)
+							if la_command.execution_result.passed then
+								write_information ("%T[Web Api handler] Command was executed succesfully, trying to find an available representation to create a response.")
+								if req.is_delete_request_method then
+									l_http_status_code := {HTTP_STATUS_CODE}.gone
+									write_information ("%T[Web Api handler] It was a proper deletion, so no representation available be default.")
 								else
-									write_notice ("%T[Web Api handler] Did not find an available representation to create a response for representation type: " + representation_type_as_string(representation_response))
+									if attached la_command.result_interaction_elements as l_result_ies then
+									   	write_information ("%T[Web Api handler] Trying to make a representation for type: " + representation_type_as_string(representation_response))
+										l_representation_result.represent(req, res, Current, l_result_ies)
+									else
+										write_notice ("%T[Web Api handler] Did not find an available representation to create a response for representation type: " + representation_type_as_string(representation_response))
+										l_http_status_code := internal_server_error
+									end
+								end
+							else
+								if la_command.execution_result.excepted then
+									write_notice ("%T[Web Api handler] Command has been excepted as to create a valid execution result. Something really bad happend, probably some infrastructural problem, like a database being down!!!")
 									l_http_status_code := internal_server_error
+								else
+									l_http_status_code := {HTTP_STATUS_CODE}.not_found
+									write_information ("%T[Web Api handler] The resource was not found.")
 								end
 							end
 						else
-							if la_command.execution_result.excepted then
-								write_notice ("%T[Web Api handler] Command has been excepted as to create a valid execution result. Something really bad happend, probably some infrastructural problem, like a database being down!!!")
-								l_http_status_code := internal_server_error
-							else
-								l_http_status_code := {HTTP_STATUS_CODE}.not_found
-								write_information ("%T[Web Api handler] The resource was not found.")
-							end
+							write_notice ("%T[Web Api handler] Failed to parse the query parameters correctly according to command query interaction elements.")
 						end
 					else
-						write_notice ("%T[Web Api handler] Failed to parse the query parameters correctly according to command query interaction elements.")
+						write_notice ("%T[Web Api handler] Did not execute a command.")
 					end
 				else
-					write_notice ("%T[Web Api handler] Did not execute a command.")
+					create l_content_type_undefined.make_from_string("Content-type not available")
+					if attached req.content_type as la_content_type then
+						l_content_type_undefined.make_from_string (la_content_type.string)
+					end
+					write_notice ("%T[Web Api handler] Did not find an available representation type for " + l_content_type_undefined)
+					l_http_status_code := {HTTP_STATUS_CODE}.bad_request
 				end
-
 				l_system_interface_web_ewf.cleanup
 			end
 			if res.status_committed or res.status_code /= {HTTP_STATUS_CODE}.ok then
@@ -245,7 +263,7 @@ feature -- Interaction
 
 feature -- Query specific
 
-	parse_query_parameters(req: WSF_REQUEST; a_query_interaction_elements: like {SIF_COMMAND}.query_interaction_elements; a_query_table: SIF_INTERACTION_ELEMENT_SORTED_SET): SIF_REPRESENTATION_PARSE_RESULT
+	parse_query_parameters(req: WSF_REQUEST; a_query_interaction_elements: like {SIF_COMMAND[SIF_DAO[ANY]]}.query_interaction_elements; a_query_table: SIF_INTERACTION_ELEMENT_SORTED_SET): SIF_REPRESENTATION_PARSE_RESULT
 			-- Parse the possibilties for query parameters, so the command can filter on any available to
 			-- have a response which could be a sub collection of the complete resources collection.
 		local

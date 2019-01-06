@@ -6,10 +6,14 @@ note
 
 class
 	SIF_REPRESENTATION_NVP
-	inherit
-		SIF_REPRESENTATION
 
-		SHARED_URL_ENCODER
+inherit
+	SIF_REPRESENTATION
+
+	SHARED_URL_ENCODER
+		undefine
+			default_create
+		end
 
 feature -- Status
 

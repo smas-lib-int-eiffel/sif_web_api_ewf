@@ -27,20 +27,20 @@
 		<library name="httpd" location="$ISE_LIBRARY/contrib/library/web/framework/ewf/httpd/httpd.ecf"/>
 		<library name="json" location="$ISE_LIBRARY/contrib/library/text/parser/json/library/json.ecf"/>
 		<library name="libfcgi" location="$ISE_LIBRARY/contrib/library/web/framework/ewf/libfcgi/libfcgi.ecf"/>
-		<library name="shared_logging" location="$ISE_LIBRARY/external/library/runtime/logging/shared/src/shared_logging.ecf" readonly="false"/>
-		<library name="sif_core" location="$ISE_LIBRARY/external/library/sif/core/src/sif_core.ecf" readonly="false"/>
-		<library name="sif_web" location="$ISE_LIBRARY/external/library/sif/web/src/sif_web.ecf" readonly="false"/>
+		<library name="shared_logging" location="$ISE_LIBRARY/external/library/runtime/logging/shared/shared_logging.ecf" readonly="false"/>
+		<library name="sif_core" location="$ISE_LIBRARY/external/library/sif/core/sif_core.ecf" readonly="false"/>
+		<library name="sif_web" location="$ISE_LIBRARY/external/library/sif/web/sif_web.ecf" readonly="false"/>
 		<library name="time" location="$ISE_LIBRARY/library/time/time.ecf"/>
 		<library name="uri" location="$ISE_LIBRARY/library/text/uri/uri.ecf"/>
 		<library name="uri_template" location="$ISE_LIBRARY/contrib/library/text/parser/uri_template/uri_template.ecf"/>
 		<library name="wsf" location="$ISE_LIBRARY\contrib\library\web\framework\ewf\wsf\wsf.ecf"/>
 		<library name="wsf_extension" location="$ISE_LIBRARY/contrib/library/web/framework/ewf/wsf/wsf_extension.ecf"/>
-		<cluster name="command" location="./command" recursive="true" readonly="true"/>
-		<cluster name="fake" location="./fake/fcgi" recursive="true" readonly="true"/>
-		<cluster name="product" location="./product" recursive="true" readonly="true"/>
-		<cluster name="representations" location="./representations" recursive="true" readonly="true"/>
-		<cluster name="utility" location="./utility" recursive="true" readonly="true"/>
-		<cluster name="web_api_ewf" location="./web_api_ewf" recursive="true" readonly="true"/>
-		<cluster name="sif_web_api_ewf_fcgi" location="." recursive="false" readonly="true"/>
+		<cluster name="command" location="./src/command" recursive="true"/>
+		<cluster name="fake" location="./src/fake/fcgi" recursive="true"/>
+		<cluster name="product" location="./src/product" recursive="true"/>
+		<cluster name="representations" location="./src/representations" recursive="true"/>
+		<cluster name="utility" location="./src/utility" recursive="true"/>
+		<cluster name="web_api_ewf" location="./src/web_api_ewf" recursive="true"/>
+		<cluster name="sif_web_api_ewf_fcgi" location="./src" recursive="false"/>
 	</target>
 </system>

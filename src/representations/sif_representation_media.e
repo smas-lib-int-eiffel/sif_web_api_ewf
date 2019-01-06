@@ -6,27 +6,24 @@ note
 
 class
 	SIF_REPRESENTATION_MEDIA
-	inherit
-		SIF_REPRESENTATION
-			undefine
-				default_create
-			select
-				is_equal,
-				copy
-			end
 
-		SIF_INTERACTION_ELEMENT_IDENTIFIERS_WEB
+inherit
+	SIF_REPRESENTATION
+		undefine
+			default_create
+		end
+
+		SIF_INTERACTION_ELEMENT_IDENTIFIERS
 
 create
 	make
 
 feature -- Initialization
 
-	make( a_media_path: PATH )
+	make
 			-- Creation
 		do
 			default_create
-			media_path := a_media_path
 		end
 
 feature -- Status
@@ -40,7 +37,8 @@ feature -- Status
 feature -- Parsing
 
 	parse( req: WSF_REQUEST; a_sorted_set_of_interaction_elements: SIF_INTERACTION_ELEMENT_SORTED_SET; a_ie_set_to_publish: SIF_INTERACTION_ELEMENT_SORTED_SET ) : SIF_REPRESENTATION_PARSE_RESULT
-			-- Positive result, if parseable and input validation succeeded and all mandatory elements are available and any optional elements match.			-- The interaction elements to publish needs to be filled with the mandatory and any optional interaction elements mapped from the input stream to the sorted set of interaction elements,
+			-- Positive result, if parseable and input validation succeeded and all mandatory elements are available and any optional elements match.			
+			-- The interaction elements to publish needs to be filled with the mandatory and any optional interaction elements mapped from the input stream to the sorted set of interaction elements,
 			-- so these can be used to publish to the interactor during interaction		
 		local
 			i: INTEGER
@@ -93,18 +91,15 @@ feature -- Representation
 			l_file_response: WSF_FILE_RESPONSE
 			l_media_path: PATH
 		do
-			if attached a_sorted_set_of_interaction_elements.interaction_element (Iei_web_media) as l_ie_media_result then
-				check not l_ie_media_result.to_string.is_empty end
-
-				create {WSF_FILE_RESPONSE} l_file_response.make_with_content_type_and_path ({HTTP_MIME_TYPES}.image_jpg ,media_path.appended (media_path.directory_separator.out + l_ie_media_result.to_string))
+			if attached {SIF_IE_LIST}a_sorted_set_of_interaction_elements.interaction_element (Iei_media_list) as la_ie_media_file_list and then
+			   la_ie_media_file_list.elements.count = 1 and then
+			   attached la_ie_media_file_list.elements.at(1) as la_ie_media_files and then
+			   attached {SIF_IE_FILE} la_ie_media_files.interaction_element (Iei_media) as la_ie_media_file then
+				create {WSF_FILE_RESPONSE} l_file_response.make_with_path (la_ie_media_file.file.path)
 				res.send (l_file_response)
 			else
-				check attached a_sorted_set_of_interaction_elements.interaction_element (Iei_web_media) as l_ie_media_result end
+				check attached {SIF_IE_LIST}a_sorted_set_of_interaction_elements.interaction_element (iei_media_list) as la_ie_media_file_list and then la_ie_media_file_list.elements.count = 1 and then attached la_ie_media_file_list.elements.at(1) as la_ie_media_files and then attached {SIF_IE_FILE}la_ie_media_files.interaction_element (Iei_media) end
 			end
 		end
-
-feature {NONE} -- Implementation
-
-	media_path: PATH
 
 end

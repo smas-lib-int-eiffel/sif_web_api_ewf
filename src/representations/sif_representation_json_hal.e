@@ -6,37 +6,29 @@ note
 
 class
 	SIF_REPRESENTATION_JSON_HAL
-	inherit
-		SIF_REPRESENTATION
-			undefine
-				default_create
-			select
-				is_equal,
-				copy
-			end
 
-		JSON_PARSER_ACCESS
-			undefine
-				default_create
-			end
+inherit
+	SIF_REPRESENTATION
 
-		SHARED_EJSON
-			undefine
-				default_create
-			end
+	JSON_PARSER_ACCESS
+		undefine
+			default_create
+		end
 
-		SHARED_URL_ENCODER
-			undefine
-				default_create
-			end
+	SHARED_EJSON
+		undefine
+			default_create
+		end
 
-		SIF_SHARED_PRODUCT_WEB_EWF
-			undefine
-				default_create
-			end
+	SHARED_URL_ENCODER
+		undefine
+			default_create
+		end
 
-		SIF_INTERACTION_ELEMENT_IDENTIFIERS_WEB
-
+	SIF_SHARED_PRODUCT_WEB_EWF
+		undefine
+			default_create
+		end
 
 feature -- Status
 
@@ -93,27 +85,6 @@ feature -- Parsing
 		end
 
 feature {NONE} -- Implementation
-
-	redirect_url (a_set: SIF_INTERACTION_ELEMENT_SORTED_SET): detachable STRING
-			-- Url used for redirection
-			-- (Void if not relevant)
-		local
-			found: BOOLEAN
-		do
-			from
-				a_set.start
-			until
-				found or else a_set.off
-			loop
-				if attached {SIF_IE_TEXT} a_set.item as la_ie_text then
-					found := la_ie_text.identifier = Iei_web_redirect
-					if found and then not la_ie_text.text.is_empty then
-						Result := la_ie_text.text
-					end
-				end
-				a_set.forth
-			end
-		end
 
 	make_links (a_handler: SIF_WEB_API_REQUEST_HANDLER)
 			-- Build `links' from the links associated with the current API request handler.

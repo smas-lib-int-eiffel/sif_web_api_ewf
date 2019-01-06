@@ -161,8 +161,24 @@ feature {NONE} -- Initialization
 				   	-- So the found command will be twinned from the associated command of the found api handler.
 
 				   	-- Note that the next line will create a new instance of the associated command during run-time...
-					if attached {SIF_COMMAND}l_matched_command.create_new_context as la_command then
+					if attached {SIF_COMMAND[SIF_DAO[ANY]]}l_matched_command.create_new_context as la_command then
 						executing_command := la_command
+						-- Now to be able to use the same command for all data operations, we need to be able to re-create the interaction elements,
+						-- which could be related to the data operation. While this is a dynamic case, it has to be done in this stage to have this properly handled in time.
+						if req.is_get_request_method then
+							la_command.data_operation_enumeration.set_data_operation ({SIF_ENUMERATION_DATA_OPERATION}.read)
+						end
+						if req.is_post_request_method then
+							la_command.data_operation_enumeration.set_data_operation ({SIF_ENUMERATION_DATA_OPERATION}.create_)
+						end
+						if req.is_put_request_method or req.request_method.is_case_insensitive_equal ({HTTP_REQUEST_METHODS}.method_patch) then
+							la_command.data_operation_enumeration.set_data_operation ({SIF_ENUMERATION_DATA_OPERATION}.update)
+						end
+						if req.is_delete_request_method then
+							la_command.data_operation_enumeration.set_data_operation ({SIF_ENUMERATION_DATA_OPERATION}.create_)
+						end
+						la_command.interaction_elements.wipe_out
+						la_command.prepare_interaction_elements
 						web_api_handler := la_api_handler.create_new_context
 						create query_table.make
 						create interaction_table.make
@@ -236,6 +252,12 @@ feature -- Interaction
 			end
 		end
 
+	human: BOOLEAN
+			-- True, when system interface is used for interaction with human beings.
+		do
+			Result := false
+		end
+
 	cleanup
 		do
 			if attached web_api_handler as l_new_web_api_handler and
@@ -257,7 +279,7 @@ feature -- Interaction
 
 	query_table: detachable SIF_INTERACTION_ELEMENT_SORTED_SET
 
-	executing_command: detachable SIF_COMMAND
+	executing_command: detachable SIF_COMMAND[SIF_DAO[ANY]]
 
 
 feature -- Identification

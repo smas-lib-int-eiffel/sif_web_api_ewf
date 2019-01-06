@@ -8,8 +8,15 @@ note
 
 deferred class
 	SIF_REPRESENTATION
-	inherit
-		WSF_RESOURCE_HANDLER_HELPER
+
+inherit
+	WSF_RESOURCE_HANDLER_HELPER
+		undefine
+			default_create
+		end
+
+	SIF_INTERACTION_ELEMENT_IDENTIFIERS
+
 
 feature -- Parsing
 
@@ -40,6 +47,27 @@ feature {NONE} -- Implementation
 	do_represent(req: WSF_REQUEST; res: WSF_RESPONSE; a_handler: SIF_WEB_API_REQUEST_HANDLER; a_sorted_set_of_interaction_elements: SIF_INTERACTION_ELEMENT_SORTED_SET)
 			-- Create a representation by using the interaction elements which contain the information for the content.
 		deferred
+		end
+
+	redirect_url (a_set: SIF_INTERACTION_ELEMENT_SORTED_SET): detachable STRING
+			-- Url used for redirection
+			-- (Void if not relevant)
+		local
+			found: BOOLEAN
+		do
+			from
+				a_set.start
+			until
+				found or else a_set.off
+			loop
+				if attached {SIF_IE_TEXT} a_set.item as la_ie_text then
+					found := la_ie_text.identifier = Iei_redirect
+					if found and then not la_ie_text.text.is_empty then
+						Result := la_ie_text.text
+					end
+				end
+				a_set.forth
+			end
 		end
 
 note

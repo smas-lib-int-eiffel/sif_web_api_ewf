@@ -10,8 +10,14 @@ class
 		SIF_REPRESENTATION
 
 		JSON_PARSER_ACCESS
+			undefine
+				default_create
+			end
 
 		SHARED_LOG_FACILITY
+			undefine
+				default_create
+			end
 
 feature -- Status
 
@@ -197,6 +203,14 @@ feature {NONE} -- Implementation
 	do_represent(req: WSF_REQUEST; res: WSF_RESPONSE; a_handler: SIF_WEB_API_REQUEST_HANDLER; a_sorted_set_of_interaction_elements: SIF_INTERACTION_ELEMENT_SORTED_SET)
 			-- Create a representation by using the interaction elements which contain the information for the content.
 		do
+			if attached redirect_url (a_sorted_set_of_interaction_elements) as la_url then
+				res.redirect_now (la_url)
+			else
+				if req.is_post_request_method then
+					res.set_status_code ({HTTP_STATUS_CODE}.created)
+				end
+				res.header.put_content_type ("application/hal+json")
+			end
 		end
 
 	count_mandatory: INTEGER

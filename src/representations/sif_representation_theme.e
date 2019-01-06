@@ -9,14 +9,14 @@ class
 
 inherit
 	SIF_REPRESENTATION
-		undefine
-			default_create
-		select
-			is_equal,
-			copy
-		end
+--		undefine
+--			default_create
+--		select
+--			is_equal,
+--			copy
+--		end
 
-	SIF_INTERACTION_ELEMENT_IDENTIFIERS_WEB
+	--SIF_INTERACTION_ELEMENT_IDENTIFIERS_WEB
 
 create
 	make

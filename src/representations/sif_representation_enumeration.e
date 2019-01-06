@@ -165,7 +165,7 @@ feature -- Query
 			when multipart_form then
 				create Result.make_from_string(multipart_form_data)
 			when media then
-				create Result.make_from_string("special media using ?media_name=")
+				create Result.make_from_string("special media using assets/media_name=file_name OR configured media resource path/media_name=file_name")
 			when json_hal then
 				create Result.make_from_string("application/hal+json")
 			when theme then

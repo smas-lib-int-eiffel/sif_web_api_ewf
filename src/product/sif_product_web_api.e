@@ -60,7 +60,7 @@ feature {NONE} -- Manufacturing
 		deferred
 		end
 
-	manufacture_api_handler(a_command: SIF_COMMAND; a_methods: WSF_REQUEST_METHODS;
+	manufacture_api_handler(a_command: SIF_COMMAND[SIF_DAO[ANY]]; a_methods: WSF_REQUEST_METHODS;
 							a_resource_path: STRING; a_representation_type: like {SIF_REPRESENTATION_ENUMERATION}.type;
 							a_pagination_capable: like {SIF_WEB_API_REQUEST_HANDLER}.pagination_capable;
 							a_search: like {SIF_WEB_API_REQUEST_HANDLER}.search)

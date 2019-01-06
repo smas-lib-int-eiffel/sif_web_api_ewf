@@ -10,12 +10,12 @@ class
 		SIF_REPRESENTATION
 			undefine
 				default_create
-			select
-				is_equal,
-				copy
+--			select
+--				is_equal,
+--				copy
 			end
 
-		SIF_INTERACTION_ELEMENT_IDENTIFIERS_WEB
+		SIF_INTERACTION_ELEMENT_IDENTIFIERS
 
 		SHARED_URL_ENCODER
 			undefine
@@ -59,18 +59,18 @@ feature {NONE} -- Implementation web page
 			loop
 				a_sorted_set_of_interaction_elements.go_i_th (i)
 				l_ie := a_sorted_set_of_interaction_elements.item
-				if attached {SIF_IE_WEB_PAGE}l_ie as l_ie_web_page then
-					if attached l_ie_web_page.web_page_representor as l_web_page_presentor then
-						l_html_page_response := l_web_page_presentor.item(req)
-						if l_to_be_redirected then
-							l_html_page_response.set_status_code ({HTTP_STATUS_CODE}.found)
-						end
-						res.send (l_html_page_response)
-					end
-				end
-				
+--				if attached {SIF_IE_WEB_PAGE}l_ie as l_ie_web_page then
+--					if attached l_ie_web_page.web_page_representor as l_web_page_presentor then
+--						l_html_page_response := l_web_page_presentor.item(req)
+--						if l_to_be_redirected then
+--							l_html_page_response.set_status_code ({HTTP_STATUS_CODE}.found)
+--						end
+--						res.send (l_html_page_response)
+--					end
+--				end
+
 				if attached {SIF_IE_TEXT}l_ie as l_ie_text then
-					if l_ie_text.identifier = Iei_web_redirect then
+					if l_ie_text.identifier = Iei_redirect then
 						l_to_be_redirected := True
 						if l_result_query_parameters.is_empty then
 							res.redirect_now (l_ie_text.text)

@@ -24,6 +24,7 @@ feature -- Creation
 			create scheme.make_empty
 			create base_url.make_empty
 			create api_handlers.make_empty
+			create media_resource_path.make_empty
 			create link_list_media.make(0)
 		end
 
