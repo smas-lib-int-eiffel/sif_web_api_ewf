@@ -35,7 +35,6 @@
 		<library name="uri_template" location="$ISE_LIBRARY/contrib/library/text/parser/uri_template/uri_template.ecf"/>
 		<library name="wsf" location="$ISE_LIBRARY\contrib\library\web\framework\ewf\wsf\wsf.ecf"/>
 		<library name="wsf_extension" location="$ISE_LIBRARY/contrib/library/web/framework/ewf/wsf/wsf_extension.ecf"/>
-		<cluster name="command" location="./src/command" recursive="true"/>
 		<cluster name="fake" location="./src/fake/fcgi" recursive="true"/>
 		<cluster name="product" location="./src/product" recursive="true"/>
 		<cluster name="representations" location="./src/representations" recursive="true"/>
