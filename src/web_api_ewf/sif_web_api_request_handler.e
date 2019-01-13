@@ -111,6 +111,7 @@ feature -- Web execution
 			l_media_path_comparer: STRING
 			l_media_path_index_first_template_char: INTEGER
 			l_command_cpy: SIF_INTERACTOR
+			l_content_type_bypass: BOOLEAN
 		do
 			write_information ("%T[Web Api handler] Executing handler.")
 			l_http_status_code := {HTTP_STATUS_CODE}.ok
@@ -177,9 +178,12 @@ feature -- Web execution
 				end
 				if req.is_get_request_method then
 					l_http_status_code := parse_query_parameters(req, la_command.query_interaction_elements, l_query_table).code
+					if l_http_status_code = {HTTP_STATUS_CODE}.ok then
+						l_content_type_bypass := true
+					end
 				end
 
-				if l_representation_type /= {SIF_REPRESENTATION_ENUMERATION}.undefined then
+				if l_representation_type /= {SIF_REPRESENTATION_ENUMERATION}.undefined or else l_content_type_bypass then
 					if l_http_status_code = {HTTP_STATUS_CODE}.ok then
 						if l_http_status_code = {HTTP_STATUS_CODE}.ok then
 							write_information ("%T[Web Api handler] Going to execute the command.")
