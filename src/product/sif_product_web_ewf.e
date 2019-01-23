@@ -129,7 +129,7 @@ feature {SIF_SYSTEM_INTERFACE_WEB_EWF,SIF_WEB_API_REQUEST_HANDLER} -- Manufactur
 					available_representations.extend (l_representation_json, {SIF_REPRESENTATION_ENUMERATION}.json)
 				end
 				l_command := create{SIF_COMMAND_LOG_FACILITY_EXTENDED}.make
-				manufacture_api_handler(l_command, method_patch, "/log_facility", {SIF_REPRESENTATION_ENUMERATION}.json_hal, false, void)
+				manufacture_api_handler(l_command, method_patch, "log_facility", {SIF_REPRESENTATION_ENUMERATION}.json_hal, false, void)
 			end
 			if has_media then
 				create l_representation_media.make
