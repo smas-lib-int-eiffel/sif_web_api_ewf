@@ -14,8 +14,7 @@ deferred class
 			redefine
 				initialize,
 				launch,
-				manufacture,
-				manufacture_commands
+				manufacture
 			end
 
 		HTTP_REQUEST_METHODS
